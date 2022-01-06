@@ -4,7 +4,7 @@
 #if _WIN32
 	#include "windows.h"
 #else
-  typedef bool BOOL;
+  typedef int BOOL;
 	typedef signed char INT8;
 	typedef unsigned char UINT8;
 	typedef signed short INT16;
