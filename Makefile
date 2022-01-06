@@ -1,5 +1,5 @@
 AR=ar
-CC=g++
+CC=g++ -std=c++11 -O2
 override CFLAGS += '-I./include'
 
 OBJS = Allocator.o	\
