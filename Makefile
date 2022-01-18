@@ -1,30 +1,49 @@
-AR=ar
-CC=g++ -std=c++11 -O2
-override CFLAGS += '-I./include'
+# Copyright 2019 MXNavi, All Rights Reserved
+### Standard Makefile template
+### Copyright (C) Matthew Peddie <peddie@alum.mit.edu>
+###
+### This file is hereby placed in the public domain, or, if your legal
+### system doesn't recognize this concept, you may consider it
+### licensed under the WTFPL version 2.0 or any BSD license you
+### choose.
+###
+### This file should be all you need to configure a basic project;
+### obviously for more complex projects, you'll need to edit the other
+### files as well.  It supports only one project at a time.  Type
+### ``make help'' for usage help.
 
-OBJS = Allocator.o	\
-	   Fault.o		\
-	   xallocator.o
+# What's the executable called?
+PROJ = xallocator
 
-all: xallocator
+LOCAL_PATH:= $(shell pwd)
 
-xallocator: $(OBJS)
-	$(AR) rvs $@.a $^
-	$(CC) -shared -o lib$@.so -Wl,--whole-archive $@.a -Wl,--no-whole-archive
-	
-%.o : src/%.cpp
-	$(CC) -c $< -o $@ $(CFLAGS) -fPIC
+MODULE_VERSION := $(shell git describe --tags --dirty)
+ifeq ($(MODULE_VERSION),)
+    MODULE_VERSION:= dev-$(shell git rev-parse --short HEAD)
+endif
 
-install: xallocator
-	cp -R ./include /usr/local/include/xalloc
-	cp lib$^.so /usr/local/lib
-	ldconfig
+####################################################
+xallocator_SRC_FILES := \
+    src/Allocator.cpp	\
+    src/Fault.cpp		\
+    src/xallocator.cpp
 
-demo: xallocator demo/main.cpp
-	$(CC) -o main demo/main.cpp $(CFLAGS) -L./ -lxallocator 
+LOCAL_SRC_FILES := \
+    $(xallocator_SRC_FILES) \
 
-cleantmp:
-	rm *.o *.a
 
-clean:
-	rm -f *.o *.so main *.a
+LOCAL_C_INCLUDES:= \
+    $(LOCAL_PATH) \
+    $(LOCAL_PATH)/include \
+
+LOCAL_CFLAGS += -DMODULE_VERSION=\"$(MODULE_VERSION)\"
+LOCAL_CFLAGS += -DLOG_TAG=\"xallocator\"
+#LOCAL_CFLAGS += -fvisibility=hidden
+
+#LOCAL_LIBNAMES += libcutils
+
+#LOCAL_LIBDIRS += $(ROOT_DIR)/foundation/libcutils
+
+#######################################################
+
+include $(ROOT_DIR)/build/makefile-$(TARGET_PLATFORM)-$(TARGET_ARCH).mk
