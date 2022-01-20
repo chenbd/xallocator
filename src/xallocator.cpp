@@ -41,7 +41,7 @@ static BOOL _xallocInitialized = FALSE;
 	static Allocator* _allocators[MAX_ALLOCATORS];
 
 #else
-	#define MAX_ALLOCATORS  20
+	#define MAX_ALLOCATORS  22
 	static Allocator* _allocators[MAX_ALLOCATORS];
 #endif	// STATIC_POOLS
 
